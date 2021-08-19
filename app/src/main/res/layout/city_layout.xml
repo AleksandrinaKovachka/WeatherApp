@@ -28,14 +28,16 @@
             android:layout_width="179dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="@string/city_name" />
+            android:text="@string/city_name"
+            android:textSize="24sp" />
 
         <TextView
             android:id="@+id/degreeTextView"
             android:layout_width="124dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="@string/degree" />
+            android:text="@string/degree"
+            android:textSize="16sp" />
 
         <ImageView
             android:id="@+id/weatherIconImageView"

@@ -16,4 +16,5 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="menu_settings">Menu settings</string>
     <string name="search">Search</string>
+    <string name="found_city">Found city</string>
 </resources>
