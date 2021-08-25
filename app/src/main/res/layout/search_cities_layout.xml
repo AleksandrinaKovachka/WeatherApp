@@ -7,15 +7,30 @@
     android:layout_marginTop="5dp"
     android:layout_marginEnd="10dp"
     android:layout_marginBottom="5dp"
-    android:background="#00BCD4"
-    app:cardBackgroundColor="#CBEAEE"
+    android:background="#82A25E"
+    app:cardBackgroundColor="#EAF4DE"
     app:contentPadding="5dp">
 
 
-    <TextView
-        android:id="@+id/foundCityTextView"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/found_city"
-        android:textSize="24sp" />
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/foundCityTextView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/found_city"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/countryTextView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/country"
+            android:textColor="#5C5C5C"
+            android:textSize="16sp" />
+    </LinearLayout>
+
 </androidx.cardview.widget.CardView>

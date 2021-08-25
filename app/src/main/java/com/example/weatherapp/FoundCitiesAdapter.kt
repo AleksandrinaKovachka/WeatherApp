@@ -1,34 +1,49 @@
 package com.example.weatherapp
 
-import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.weatherapp.databinding.SearchCitiesLayoutBinding
 
-class FoundCitiesAdapter(private val context: Context, private val foundCitiesList: List<City>, private val cellClickListener: SearchCitiesActivity) : RecyclerView.Adapter<FoundCitiesAdapter.FoundCitiesViewHolder>() {
+class FoundCitiesAdapter(private val onItemClick: (City) -> Unit) :
+    ListAdapter<City, FoundCitiesAdapter.FoundCitiesViewHolder>(CitiesComparator()) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FoundCitiesViewHolder {
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.search_cities_layout, parent, false)
-        return FoundCitiesViewHolder(v)
+    class FoundCitiesViewHolder(private val binding: SearchCitiesLayoutBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+            fun bind(city: City) {
+                binding.countryTextView.text = city.country
+                binding.foundCityTextView.text = city.name
+            }
     }
 
-    override fun onBindViewHolder(holder: FoundCitiesViewHolder, position: Int) {
-        val city = foundCitiesList[position]
-        holder.cityNameTextView.text = city.name
+    class CitiesComparator : DiffUtil.ItemCallback<City>() {
+        override fun areItemsTheSame(oldItem: City, newItem: City): Boolean {
+            return oldItem.id == newItem.id
+        }
 
-        holder.itemView.setOnClickListener {
-            cellClickListener.onCellClickListener(city)
+        override fun areContentsTheSame(oldItem: City, newItem: City): Boolean {
+            return oldItem.name == newItem.name
         }
     }
 
-    override fun getItemCount(): Int {
-        return foundCitiesList.size
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FoundCitiesViewHolder {
+        return FoundCitiesViewHolder(
+            SearchCitiesLayoutBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
     }
 
-    class FoundCitiesViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    override fun onBindViewHolder(holder: FoundCitiesViewHolder, position: Int) {
+        holder.bind(getItem(position))
 
-        val cityNameTextView : TextView = itemView.findViewById(R.id.foundCityTextView)
+        holder.itemView.setOnClickListener {
+            onItemClick(getItem(position))
+        }
     }
 }
+

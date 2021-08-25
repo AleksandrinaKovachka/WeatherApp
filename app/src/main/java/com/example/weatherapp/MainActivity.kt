@@ -50,12 +50,6 @@ class MainActivity : AppCompatActivity() {
                 override fun onQueryTextSubmit(p0: String?): Boolean {
                     //Toast.makeText(applicationContext, "Test query$p0", Toast.LENGTH_LONG).show()
 
-//                    val intent = Intent(this, SearchCitiesActivity::class.java).apply {
-//                        putExtra("note_data", p0)
-//                    }
-//
-//                    startActivity(intent)
-
                     val intent = Intent(this@MainActivity, SearchCitiesActivity::class.java)
                     intent.putExtra("city_name", p0)
                     startActivity(intent)

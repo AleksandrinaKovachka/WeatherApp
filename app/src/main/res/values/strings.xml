@@ -17,4 +17,5 @@
     <string name="menu_settings">Menu settings</string>
     <string name="search">Search</string>
     <string name="found_city">Found city</string>
+    <string name="country">Country</string>
 </resources>

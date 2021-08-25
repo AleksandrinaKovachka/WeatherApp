@@ -14,6 +14,7 @@ import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.weatherapp.database.CityData
 import com.example.weatherapp.database.CityListViewModel
 import com.example.weatherapp.database.CityListViewModelFactory
 import com.example.weatherapp.databinding.FragmentFirstBinding
@@ -57,15 +58,15 @@ class FirstFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
-        val adapter = CityAdapter{
-            val action = FirstFragmentDirections.actionFirstFragmentToSecondFragment("Test")
+        val adapter = CityAdapter {
+            val action = FirstFragmentDirections.actionFirstFragmentToSecondFragment(it.name, it.id)
             findNavController().navigate(action)
         }
         binding.recyclerView.adapter = adapter
 
         lifecycle.coroutineScope.launch{
             cityViewModel.allCities().collect {
-                adapter.submitList(it)
+                adapter.submitList(setCityWeatherInfo(it))
             }
         }
     }
@@ -73,5 +74,16 @@ class FirstFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private suspend fun setCityWeatherInfo(cities: List<CityData>) : List<CityInfo>  {
+        val cityInfo: MutableList<CityInfo> = mutableListOf()
+        for (city in cities) {
+            cityViewModel.getCityWeatherByCityId(city.cityId).collect {
+                cityInfo.add(CityInfo(city.cityId, city.cityName, city.countryName, it.main.temp.toInt(), it.weather[0].icon))
+            }
+        }
+
+        return cityInfo.toList()
     }
 }

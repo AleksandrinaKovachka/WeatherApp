@@ -1,3 +1,3 @@
 package com.example.weatherapp
 
-data class City(val id: Int = 0, val name: String)
+data class City(val id: Int = 0, val name: String, val country: String)
