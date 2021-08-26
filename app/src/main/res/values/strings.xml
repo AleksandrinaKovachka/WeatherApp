@@ -18,4 +18,13 @@
     <string name="search">Search</string>
     <string name="found_city">Found city</string>
     <string name="country">Country</string>
+    <string name="temperature">Temperature</string>
+    <string name="life">Life</string>
+    <string name="humidity">Humidity</string>
+    <string name="pressure">Pressure</string>
+    <string name="wind_speed">Wind Speed</string>
+    <string name="hourly">Hourly</string>
+    <string name="weekly">Weekly</string>
+    <string name="temp_icon">temp icon</string>
+    <string name="day_or_hour">Day or hour</string>
 </resources>

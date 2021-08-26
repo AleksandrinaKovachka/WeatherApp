@@ -27,7 +27,5 @@
         <argument
             android:name="Name"
             app:argType="string" />
-        <argument android:name="CityId"
-            app:argType="integer" />
     </fragment>
 </navigation>

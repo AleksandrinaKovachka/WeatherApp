@@ -1,8 +1,7 @@
 package com.example.weatherapp.database
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+import com.example.weatherapp.CityInfo
 import com.example.weatherapp.WeatherAPI
 import com.example.weatherapp.city_forecast.CityForecastResponse
 import com.example.weatherapp.city_weather.CityWeatherResponse
@@ -14,6 +13,9 @@ import kotlinx.coroutines.launch
 const val APP_ID = "9405140ec7fd6dc8882d7e44f40da75c"
 
 class CityListViewModel(private val cityDao: CityDao) : ViewModel() {
+    private var _mutableCityInfo = MutableLiveData<CityInfo>()
+    val mutableCityInfo get() = _mutableCityInfo
+
     fun allCities(): Flow<List<CityData>> = cityDao.getAll()
 
     fun insert(id: Int, name: String, country: String) = viewModelScope.launch {

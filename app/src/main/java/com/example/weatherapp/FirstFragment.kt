@@ -8,7 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.activity.viewModels
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.lifecycleScope
@@ -30,9 +32,6 @@ class FirstFragment : Fragment() {
     private val cityViewModel: CityListViewModel by activityViewModels{
         CityListViewModelFactory((requireActivity().application as CityApplication).database.cityDao())
     }
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,7 +58,8 @@ class FirstFragment : Fragment() {
 
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
         val adapter = CityAdapter {
-            val action = FirstFragmentDirections.actionFirstFragmentToSecondFragment(it.name, it.id)
+            cityViewModel.mutableCityInfo.value = it
+            val action = FirstFragmentDirections.actionFirstFragmentToSecondFragment(it.name)
             findNavController().navigate(action)
         }
         binding.recyclerView.adapter = adapter
