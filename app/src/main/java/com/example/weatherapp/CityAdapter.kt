@@ -36,6 +36,10 @@ class CityAdapter(private val onItemClick: (CityInfo) -> Unit) : ListAdapter<Cit
         }
     }
 
+    fun removeItem(viewHolder: CityViewHolder) : CityInfo {
+        return getItem(viewHolder.adapterPosition)
+    }
+
     class CityViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val cityNameTextView: TextView = itemView.findViewById(R.id.cityNameTextView)
         val countryTextView: TextView = itemView.findViewById(R.id.countryTextView)

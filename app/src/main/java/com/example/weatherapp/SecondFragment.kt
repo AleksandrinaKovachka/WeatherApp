@@ -1,17 +1,19 @@
 package com.example.weatherapp
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
+import android.view.*
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.database.CityListViewModel
 import com.example.weatherapp.database.CityListViewModelFactory
 import com.example.weatherapp.databinding.FragmentSecondBinding
@@ -75,6 +77,8 @@ class SecondFragment : Fragment() {
                 hourAndDateForecast(weatherData, hourlyAdapter, weeklyAdapter)
             }
         }
+
+
     }
 
     private fun hourAndDateForecast(weatherData: List<WeatherData>, hourlyAdapter: WeatherAdapter, weeklyAdapter: WeatherAdapter) {
