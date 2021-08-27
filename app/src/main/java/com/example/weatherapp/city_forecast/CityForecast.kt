@@ -20,5 +20,5 @@ data class CityForecast(
     @Json(name = "sys")
     val sys: SysPod,
     @Json(name = "dt_txt")
-    val dtTxt: String
+    val dt_txt: String
 )

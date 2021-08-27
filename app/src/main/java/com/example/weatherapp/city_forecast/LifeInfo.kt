@@ -8,9 +8,9 @@ data class LifeInfo(
     @Json(name = "feels_like")
     val feelsLike: Double,
     @Json(name = "temp_min")
-    val tempMin: Double,
+    val temp_min: Double,
     @Json(name = "temp_max")
-    val tempMax: Double,
+    val temp_max: Double,
     @Json(name = "pressure")
     val pressure: Int,
     @Json(name = "sea_level")
