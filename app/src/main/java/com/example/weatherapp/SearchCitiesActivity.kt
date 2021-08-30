@@ -5,11 +5,14 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.weatherapp.adapters.FoundCitiesAdapter
+import com.example.weatherapp.data.CityInfo
 import com.example.weatherapp.database.CityListViewModel
 import com.example.weatherapp.database.CityListViewModelFactory
 import com.example.weatherapp.databinding.ActivitySearchCitiesBinding
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.io.Serializable
 
 class SearchCitiesActivity : AppCompatActivity() {
 
@@ -18,34 +21,48 @@ class SearchCitiesActivity : AppCompatActivity() {
     }
 
     private lateinit var adapter: FoundCitiesAdapter
+    private lateinit var binding: ActivitySearchCitiesBinding
+    private lateinit var cityName: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val binding = ActivitySearchCitiesBinding.inflate(layoutInflater)
+        binding = ActivitySearchCitiesBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val cityName = intent.getStringExtra("city_name")
+        cityName = intent.getStringExtra("city_name").toString()
 
         binding.searchedCitiesRecyclerView.layoutManager = LinearLayoutManager(baseContext)
 
+        setupAdapter()
+    }
+
+    private fun setupAdapter() {
         adapter = FoundCitiesAdapter{
-            searchViewModel.insert(it.id, it.name, it.country)
-            finish()
+            setupAdapterConstructor(it)
         }
         binding.searchedCitiesRecyclerView.adapter = adapter
 
         lifecycleScope.launch {
-            cityName?.apply {
-                searchViewModel.getCitiesByName(cityName).collect {
-                    val citiesInfo = it.list.map { city ->
-                        City(city.id, city.name, city.sys.country)
-                    }.toList()
-                    adapter.submitList(citiesInfo)
-                }
+            searchCities()
+        }
+    }
+
+    private fun setupAdapterConstructor(cityInfo: CityInfo) {
+        searchViewModel.insert(cityInfo.id, cityInfo.name, cityInfo.country)
+        intent.putExtra("city_info", cityInfo as Serializable)
+        setResult(RESULT_OK, intent)
+        finish()
+    }
+
+    private suspend fun searchCities() {
+        cityName.apply {
+            searchViewModel.getCitiesByName(cityName).collect {
+                val citiesInfo = it.list.map { city ->
+                    CityInfo(city.id, city.name, city.sys.country, city.main.temp.toInt(), city.weather[0].icon)
+                }.toList()
+                adapter.submitList(citiesInfo)
             }
         }
-
-
     }
 }

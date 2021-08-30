@@ -1,7 +1,7 @@
 package com.example.weatherapp.database
 
 import androidx.lifecycle.*
-import com.example.weatherapp.CityInfo
+import com.example.weatherapp.data.CityInfo
 import com.example.weatherapp.WeatherAPI
 import com.example.weatherapp.city_forecast.CityForecastResponse
 import com.example.weatherapp.city_weather.CityWeatherResponse
@@ -31,6 +31,7 @@ class CityListViewModel(private val cityDao: CityDao) : ViewModel() {
         map.apply {
             put("appId", APP_ID)
             put("q", name)
+            put("units", "metric")
         }
 
         return flow {

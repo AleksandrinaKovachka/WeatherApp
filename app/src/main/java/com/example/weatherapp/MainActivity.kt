@@ -1,25 +1,35 @@
 package com.example.weatherapp
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
-import android.view.MenuItem
-import android.widget.EditText
 import android.widget.SearchView
-import android.widget.Toast
-import com.google.android.material.snackbar.Snackbar
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.example.weatherapp.data.CityInfo
+import com.example.weatherapp.database.CityListViewModel
+import com.example.weatherapp.database.CityListViewModelFactory
 import com.example.weatherapp.databinding.ActivityMainBinding
-import java.io.Serializable
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+
+    private val searchViewModel: CityListViewModel by viewModels {
+        CityListViewModelFactory((application as CityApplication).database.cityDao())
+    }
+
+    private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        setupResultLauncher(it)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,36 +50,38 @@ class MainActivity : AppCompatActivity() {
                 || super.onSupportNavigateUp()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
-        val searchItem = menu?.findItem(R.id.app_bar_search)
-
-        if (searchItem != null) {
-            val searchView = searchItem.actionView as SearchView
-            searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+        val searchItem = menu.findItem(R.id.app_bar_search).actionView as SearchView
+        searchItem.apply {
+            setOnQueryTextListener(object: SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(p0: String?): Boolean {
-                    //Toast.makeText(applicationContext, "Test query$p0", Toast.LENGTH_LONG).show()
-
-                    val intent = Intent(this@MainActivity, SearchCitiesActivity::class.java)
+                    val intent = Intent(context, SearchCitiesActivity::class.java)
                     intent.putExtra("city_name", p0)
-                    startActivity(intent)
 
-                    return true
+                    clearFocus()
+                    setQuery("", false)
+                    isIconified = true
+                    resultLauncher.launch(intent)
+
+                    return false
                 }
 
                 override fun onQueryTextChange(p0: String?): Boolean {
-                    return true
+                    return false
                 }
-
             })
         }
 
-        return super.onCreateOptionsMenu(menu)
+        return true
     }
 
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//
-//
-//        return super.onOptionsItemSelected(item)
-//    }
+    private fun setupResultLauncher(result: ActivityResult) {
+        if (result.resultCode == Activity.RESULT_OK) {
+            val cityInfo = result.data?.getSerializableExtra("city_info") as CityInfo
+            searchViewModel.mutableCityInfo.value = cityInfo
+            val action = FirstFragmentDirections.actionFirstFragmentToSecondFragment(cityInfo.name)
+            findNavController(R.id.nav_host_fragment_content_main).navigate(action)
+        }
+    }
 }

@@ -1,22 +1,16 @@
 package com.example.weatherapp
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
-import android.widget.LinearLayout
-import android.widget.SearchView
-import androidx.activity.viewModels
-import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.setFragmentResult
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.coroutineScope
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.weatherapp.adapters.CityAdapter
+import com.example.weatherapp.data.CityInfo
 import com.example.weatherapp.database.CityData
 import com.example.weatherapp.database.CityListViewModel
 import com.example.weatherapp.database.CityListViewModelFactory
@@ -24,9 +18,6 @@ import com.example.weatherapp.databinding.FragmentFirstBinding
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-/**
- * A simple [Fragment] subclass as the default destination in the navigation.
- */
 class FirstFragment : Fragment() {
 
     private var _binding: FragmentFirstBinding? = null
@@ -37,7 +28,6 @@ class FirstFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -59,11 +49,17 @@ class FirstFragment : Fragment() {
 
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
 
+        setupAdapter()
+    }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun setupAdapter() {
         val adapter = CityAdapter {
-            cityViewModel.mutableCityInfo.value = it
-            val action = FirstFragmentDirections.actionFirstFragmentToSecondFragment(it.name)
-            findNavController().navigate(action)
+            setupAdapterConstructor(it)
         }
         binding.recyclerView.adapter = adapter
 
@@ -73,6 +69,27 @@ class FirstFragment : Fragment() {
             }
         }
 
+        setupItemTouch(adapter)
+    }
+
+    private fun setupAdapterConstructor(cityInfo: CityInfo) {
+        cityViewModel.mutableCityInfo.value = cityInfo
+        val action = FirstFragmentDirections.actionFirstFragmentToSecondFragment(cityInfo.name)
+        findNavController().navigate(action)
+    }
+
+    private suspend fun setCityWeatherInfo(cities: List<CityData>) : List<CityInfo>  {
+        val cityInfo: MutableList<CityInfo> = mutableListOf()
+        for (city in cities) {
+            cityViewModel.getCityWeatherByCityId(city.cityId).collect {
+                cityInfo.add(CityInfo(city.cityId, city.cityName, city.countryName, it.main.temp.toInt(), it.weather[0].icon))
+            }
+        }
+
+        return cityInfo.toList()
+    }
+
+    private fun setupItemTouch(adapter: CityAdapter) {
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
             override fun onMove(
                 recyclerView: RecyclerView,
@@ -92,46 +109,4 @@ class FirstFragment : Fragment() {
         val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
         itemTouchHelper.attachToRecyclerView(binding.recyclerView)
     }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    private suspend fun setCityWeatherInfo(cities: List<CityData>) : List<CityInfo>  {
-        val cityInfo: MutableList<CityInfo> = mutableListOf()
-        for (city in cities) {
-            cityViewModel.getCityWeatherByCityId(city.cityId).collect {
-                cityInfo.add(CityInfo(city.cityId, city.cityName, city.countryName, it.main.temp.toInt(), it.weather[0].icon))
-            }
-        }
-
-        return cityInfo.toList()
-    }
-
-//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-//        inflater.inflate(R.menu.menu_main, menu)
-//
-//        val searchItem = menu.findItem(R.id.app_bar_search)
-//
-//        if (searchItem != null) {
-//            val searchView = searchItem.actionView as SearchView
-//            searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
-//                override fun onQueryTextSubmit(p0: String?): Boolean {
-//                    val intent = Intent(context, SearchCitiesActivity::class.java)
-//                    intent.putExtra("city_name", p0)
-//                    startActivity(intent)
-//
-//                    return true
-//                }
-//
-//                override fun onQueryTextChange(p0: String?): Boolean {
-//                    return true
-//                }
-//
-//            })
-//        }
-//
-//        return super.onCreateOptionsMenu(menu, inflater)
-//    }
 }

@@ -8,8 +8,8 @@
     android:layout_marginTop="5dp"
     android:layout_marginEnd="10dp"
     android:layout_marginBottom="5dp"
-    android:background="#91A07C"
-    app:cardBackgroundColor="#A2B091"
+    android:background="#63A2A9"
+    app:cardBackgroundColor="#63A2A9"
     app:contentPadding="5dp">
 
     <LinearLayout
@@ -29,8 +29,8 @@
             android:id="@+id/iconImageView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:srcCompat="@tools:sample/avatars"
-            android:contentDescription="@string/temp_icon" />
+            android:contentDescription="@string/temp_icon"
+            tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
             android:id="@+id/tempTextView"

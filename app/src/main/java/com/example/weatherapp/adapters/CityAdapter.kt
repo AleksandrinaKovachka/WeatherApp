@@ -1,4 +1,4 @@
-package com.example.weatherapp
+package com.example.weatherapp.adapters
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -9,11 +9,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.weatherapp.database.CityData
+import com.example.weatherapp.R
+import com.example.weatherapp.data.CityInfo
 import com.squareup.picasso.Picasso
 
 
-class CityAdapter(private val onItemClick: (CityInfo) -> Unit) : ListAdapter<CityInfo, CityAdapter.CityViewHolder>(CitiesComparator()) {
+class CityAdapter(private val onItemClick: (CityInfo) -> Unit) : ListAdapter<CityInfo, CityAdapter.CityViewHolder>(
+    CitiesComparator()
+) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CityViewHolder {
         return CityViewHolder.create(parent)
